@@ -5,6 +5,7 @@
     <!-- <p>Display the details of the Dish here</p> -->
     <div fxFlex *ngIf="dish">
       <mat-card>
+        <button mat-icon-button (click)="goBack()"> <i class="fa fa-arrow-circle-left"></i> </button>
         <mat-card-header>
           <mat-card-title>
             <h3> {{dish.name | uppercase}} </h3>
