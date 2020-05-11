@@ -1,7 +1,7 @@
 <div class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column"
   fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px" fxLayoutGap.xs="0">
 
-  <div fxFlex="50" *ngIf="dish">
+  <div fxFlex *ngIf="dish">
     <!-- <p>Display the details of the Dish here</p> -->
     <div fxFlex>
       <mat-card>
@@ -28,7 +28,7 @@
         </mat-card-actions>
       </mat-card>
     </div>
-
+  <div fxFlex="3"></div>
     <div fxFlex="50" *ngIf="dish">
     <mat-list>
       <h3> Comments </h3>
@@ -38,7 +38,43 @@
         <p matLine> -- {{comment.author}} {{comment.date | date}} </p>
       </mat-list-item>
     </mat-list>
+
+
+    <form novalidate [formGroup]="form" #fform="ngForm" (ngSubmit)="onSubmit()">
+      <div [hidden]="form.invalid">
+        <mat-list>
+          <mat-list-item>
+            <h4 matLine> {{ form.value.comment }} </h4>
+            <p matLine>  {{ matslider.value }} Stars </p>
+            <p matLine> -- {{ form.value.author }}  </p>
+          </mat-list-item>
+        </mat-list>
+      </div>
+      <p>
+        <mat-form-field class="half-width">
+          <input matInput formControlName="author" placeholder="Name" type="text" required>
+          <mat-error *ngIf="formErrors.author">
+            {{ formErrors.author }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <p>
+        <mat-slider #matslider thumbLabel tickInterval="1000" min="1" max="5" value="5"></mat-slider>
+      </p>
+      <p>
+        <mat-form-field class="full-width">
+          <textarea matInput formControlName="comment" placeholder="Your Comment" rows=12 required>
+          </textarea>
+          <mat-error *ngIf="formErrors.comment">
+            {{ formErrors.comment }}
+          </mat-error>
+        </mat-form-field>
+      </p>
+      <button type="submit" mat-button class="background-primary text-floral-white" [disabled]="form.invalid"> Submit
+      </button>
+    </form>
     </div>
+
     <div fxFlex [hidden]="dish">
     <mat-spinner></mat-spinner> <h4>Loading...</h4>
   </div>
