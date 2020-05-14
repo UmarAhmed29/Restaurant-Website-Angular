@@ -22,21 +22,23 @@ export class DishdetailComponent implements OnInit {
   comment: Comment;
   errMess: string;
   @ViewChild('fform') feedbackFormDirective;
+  dishCopy: Dish;
+  ratingInput: number;
 
   formErrors = {
     author: '',
-    comment: '',
+    comment: ''
   };
 
   validationMessages = {
     author: {
       required: 'Name is required.',
       minlength: 'Name must be 2 characters long.',
-      maxlength: 'Name cannot be more than 25 characters.',
+      maxlength: 'Name cannot be more than 25 characters.'
     },
     comment: {
-      required: 'Comment is required.',
-    },
+      required: 'Comment is required.'
+    }
   };
 
   constructor(
@@ -53,21 +55,20 @@ export class DishdetailComponent implements OnInit {
     this.dishService.getDishIds()
       .subscribe((dishIds) => (this.dishIds = dishIds));
     this.route.params.pipe(switchMap((params: Params) => this.dishService.getDish(params['id'])))
-      .subscribe((dish) => {this.dish = dish; this.setPrevNext(dish.id); },
+      .subscribe((dish) => {this.dish = dish; this.dishCopy = dish; this.setPrevNext(dish.id); },
         errmess => this.errMess = <any>errmess );
   }
 
+  // taking input of mat-slider
+  pitch(event: any) {
+    this.ratingInput = event.value;
+    console.log(event.value);
+}
+
   createForm() {
     this.form = this.fb.group({
-      author: [
-        '',
-        [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(25),
-        ],
-      ],
-      comment: ['', Validators.required],
+      author: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(25)]],
+      comment: ['', Validators.required]
     });
 
     this.form.valueChanges.subscribe((data) => this.onValueChanged(data));
@@ -100,8 +101,13 @@ export class DishdetailComponent implements OnInit {
   onSubmit() {
     this.comment = this.form.value;
     this.comment.date = new Date().toISOString();
-    this.comment.rating = 5;
-    this.dish.comments.push(this.comment);
+    this.comment.rating = this.ratingInput;
+    this.dishCopy.comments.push(this.comment);
+    this.dishService.putDish(this.dishCopy)
+      .subscribe(dish => {
+        this.dish = dish; this.dishCopy = dish;
+      },
+        errmess => { this.dish = null; this.dishCopy = null; this.errMess = <any>errmess});
     console.log(this.comment);
     this.form.reset({
       author: '',
