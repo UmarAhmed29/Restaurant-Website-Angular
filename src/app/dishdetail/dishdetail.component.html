@@ -1,7 +1,7 @@
 <div class="container" fxLayout="row" fxLayout.sm="column" fxLayout.xs="column"
   fxLayoutAlign.gt-md="space-around center" fxLayoutGap="10px" fxLayoutGap.xs="0">
 
-  <div fxFlex *ngIf="dish" [@visibility]="visibility">
+  <div fxFlex *ngIf="dish" [@visibility]="visibility" [@expand]>
     <!-- <p>Display the details of the Dish here</p> -->
     <div fxFlex>
       <mat-card>
@@ -29,7 +29,7 @@
       </mat-card>
     </div>
   <div fxFlex="3"></div>
-    <div fxFlex="50" *ngIf="dish" [@visibility]="visibility">
+    <div fxFlex="50" *ngIf="dish" [@visibility]="visibility" [@expand]>
     <mat-list>
       <h3> Comments </h3>
       <mat-list-item *ngFor="let comment of dish.comments">
