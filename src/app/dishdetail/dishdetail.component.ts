@@ -73,7 +73,6 @@ export class DishdetailComponent implements OnInit {
   // taking input of mat-slider
   pitch(event: any) {
     this.ratingInput = event.value;
-    console.log(event.value);
 }
 
   createForm() {

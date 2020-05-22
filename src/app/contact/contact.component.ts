@@ -1,7 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Feedback, ContactType } from '../shared/feedback';
-import { flyInOut } from '../animations/app.animation';
+import { FeedbackService } from '../services/feedback.service';
+import { visibility, flyInOut, expand } from '../animations/app.animation';
 
 @Component({
   selector: 'app-contact',
@@ -12,14 +13,21 @@ import { flyInOut } from '../animations/app.animation';
     'style': 'display: block',
   },
   animations: [
-    flyInOut()
+    flyInOut(),
+    visibility(),
+    expand()
   ]
 })
 export class ContactComponent implements OnInit {
 
   feedbackForm: FormGroup;
   feedback: Feedback;
+  feedbackCopy: Feedback;
+  errMess: string;
   contactType = ContactType;
+  feedbackReturned: Feedback;
+  show = false;
+  visibility = 'shown';
   @ViewChild('fform') feedbackFormDirective;
 
   formErrors = {
@@ -50,7 +58,10 @@ export class ContactComponent implements OnInit {
     }
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private feedbackService: FeedbackService
+    ) {
     this.createForm();
   }
 
@@ -75,8 +86,8 @@ export class ContactComponent implements OnInit {
     this.onValueChanged();  // (re)set form validation messages
   }
 
-  onValueChanged(data?: any){
-    if (!this.feedbackForm) { return ;}
+  onValueChanged(data?: any) {
+    if (!this.feedbackForm) { return ; }
     const form = this.feedbackForm;
     for (const field in this.formErrors) {
       if (this.formErrors.hasOwnProperty(field)) {
@@ -98,6 +109,18 @@ export class ContactComponent implements OnInit {
   onSubmit() {
     this.feedback = this.feedbackForm.value;
     console.log(this.feedback);
+    this.feedbackService.putFeedback(this.feedback)
+      .subscribe(feedback => {
+        this.feedbackReturned = feedback; this.feedbackCopy = feedback;
+      },
+        errmess => { this.feedbackReturned = null; this.feedbackCopy = null; this.errMess = <any>errmess });
+    console.log(this.feedbackReturned);
+    this.show = true;
+    setTimeout(function() {
+      this.show = false;
+      console.log(this.show);
+    }, 5000);
+    console.log('After change of show :: ' + this.show);
     this.feedbackForm.reset({
       firstname: '',
       lastname: '',
